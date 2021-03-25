@@ -95,6 +95,7 @@ namespace TextEditor2021
             this.menuFileNew.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.menuFileNew.Size = new System.Drawing.Size(146, 22);
             this.menuFileNew.Text = "&New";
+            this.menuFileNew.ToolTipText = "Creates a new file.";
             this.menuFileNew.Click += new System.EventHandler(this.FileNew);
             // 
             // menuFileOpen
@@ -105,6 +106,7 @@ namespace TextEditor2021
             this.menuFileOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.menuFileOpen.Size = new System.Drawing.Size(146, 22);
             this.menuFileOpen.Text = "&Open";
+            this.menuFileOpen.ToolTipText = "Opens a text file in the text editor.";
             this.menuFileOpen.Click += new System.EventHandler(this.FileOpen);
             // 
             // toolStripSeparator
@@ -120,6 +122,7 @@ namespace TextEditor2021
             this.menuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.menuFileSave.Size = new System.Drawing.Size(146, 22);
             this.menuFileSave.Text = "&Save";
+            this.menuFileSave.ToolTipText = "Saves the current file.";
             this.menuFileSave.Click += new System.EventHandler(this.FileSave);
             // 
             // menuFileSaveAs
@@ -127,6 +130,7 @@ namespace TextEditor2021
             this.menuFileSaveAs.Name = "menuFileSaveAs";
             this.menuFileSaveAs.Size = new System.Drawing.Size(146, 22);
             this.menuFileSaveAs.Text = "Save &As";
+            this.menuFileSaveAs.ToolTipText = "Saves the current file to a new file.";
             this.menuFileSaveAs.Click += new System.EventHandler(this.FileSaveAs);
             // 
             // toolStripSeparator1
@@ -139,6 +143,7 @@ namespace TextEditor2021
             this.menuFileExit.Name = "menuFileExit";
             this.menuFileExit.Size = new System.Drawing.Size(146, 22);
             this.menuFileExit.Text = "E&xit";
+            this.menuFileExit.ToolTipText = "Closes the application.";
             this.menuFileExit.Click += new System.EventHandler(this.FileExit);
             // 
             // menuEdit
@@ -159,6 +164,7 @@ namespace TextEditor2021
             this.menuEditCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.menuEditCopy.Size = new System.Drawing.Size(144, 22);
             this.menuEditCopy.Text = "&Copy";
+            this.menuEditCopy.ToolTipText = "Copies the selected text to the clipboard.";
             this.menuEditCopy.Click += new System.EventHandler(this.EditCopy);
             // 
             // menuEditCut
@@ -169,6 +175,7 @@ namespace TextEditor2021
             this.menuEditCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.menuEditCut.Size = new System.Drawing.Size(144, 22);
             this.menuEditCut.Text = "Cu&t";
+            this.menuEditCut.ToolTipText = "Copies the selected text to the clipboard and removes it from the text editor.";
             this.menuEditCut.Click += new System.EventHandler(this.EditCut);
             // 
             // menuEditPaste
@@ -179,6 +186,7 @@ namespace TextEditor2021
             this.menuEditPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.menuEditPaste.Size = new System.Drawing.Size(144, 22);
             this.menuEditPaste.Text = "&Paste";
+            this.menuEditPaste.ToolTipText = "Pastes what is in the clipboard to the text editor.";
             this.menuEditPaste.Click += new System.EventHandler(this.EditPaste);
             // 
             // menuHelp
@@ -194,6 +202,8 @@ namespace TextEditor2021
             this.menuHelpAbout.Name = "menuHelpAbout";
             this.menuHelpAbout.Size = new System.Drawing.Size(116, 22);
             this.menuHelpAbout.Text = "&About...";
+            this.menuHelpAbout.ToolTipText = "Shows information about the application.";
+            this.menuHelpAbout.Click += new System.EventHandler(this.HelpAbout);
             // 
             // formTextEditor
             // 

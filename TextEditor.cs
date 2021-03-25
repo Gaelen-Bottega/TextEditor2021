@@ -14,6 +14,7 @@ namespace TextEditor2021
     public partial class formTextEditor : Form
     {
         string filePath = string.Empty;
+        bool isConfirmed = true;
         
         public formTextEditor()
         {
@@ -21,6 +22,7 @@ namespace TextEditor2021
         }
 
         #region "Event Handlers"
+
         #region "File Menu"
 
         /// <summary>
@@ -30,9 +32,14 @@ namespace TextEditor2021
         /// <param name="e"></param>
         private void FileNew(object sender, EventArgs e)
         {
-            textBoxEditor.Clear();
-            filePath = String.Empty;
-            UpdateTitle();
+            ConfirmClose();
+            if (isConfirmed == true)
+            {
+                textBoxEditor.Clear();
+                filePath = String.Empty;
+                UpdateTitle();
+            }
+            
         }
 
         /// <summary>
@@ -42,7 +49,23 @@ namespace TextEditor2021
         /// <param name="e"></param>
         private void FileOpen(object sender, EventArgs e)
         {
+            ConfirmClose();
+            if (isConfirmed == true)
+            {
+                OpenFileDialog openDialog = new OpenFileDialog();
+                openDialog.Filter = "All files (*.*)|*.*|Text files (*.txt)|*txt"; // Do we need this? 
 
+                if (openDialog.ShowDialog() == DialogResult.OK)
+                {
+                    FileStream openFile = new FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read);
+                    StreamReader reader = new StreamReader(openFile);
+
+                    textBoxEditor.Text = reader.ReadToEnd();
+
+                    reader.Close();
+                }
+            }
+            
         }
 
         /// <summary>
@@ -92,29 +115,33 @@ namespace TextEditor2021
         /// <param name="e"></param>
         private void FileExit(object sender, EventArgs e)
         {
-            Close();
+            ConfirmClose();
+            if (isConfirmed == true)
+            {
+                Close();
+            }
+            
         }
         #endregion
 
         #region "Edit Menu"
 
         /// <summary>
-        /// Copies the contents of the textbox to the clipboard
+        /// Copies the contents of the textbox to the clipboard. If the users selection is empty, the clipboard will hold the value
+        /// that was last copied and do nothing.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EditCopy(object sender, EventArgs e)
         {
-
-            Clipboard.SetText(textBoxEditor.SelectedText);
-            //if (textBoxEditor.Text != null)
-            //{
-            //    Clipboard.SetText(textBoxEditor.Text);
-            //}
+            if (textBoxEditor.SelectedText != String.Empty)
+            {
+                Clipboard.SetText(textBoxEditor.SelectedText);
+            }
         }
 
         /// <summary>
-        /// 
+        /// This will do the same thing as EditCopy but set the users selected text equal to an empty string.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -126,7 +153,7 @@ namespace TextEditor2021
         }
 
         /// <summary>
-        /// 
+        /// Pastes what is on the clipboard to the text editor. Thanks .NET Framework!
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -139,6 +166,18 @@ namespace TextEditor2021
 
         #region "Help Menu"
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HelpAbout(object sender, EventArgs e)
+        {
+            MessageBox.Show("Text Editor\n" + "By Gaelen Rhoads\n\n" + "For NETD 2202\n" + "March 2021\n\n" +
+                            "This text editor showcases basic functionality of menu items. This includes opening, " +
+                            "saving and closing and text file. The user can also copy, cut and paste text as they " +
+                            "please. This simple text editor will be included in a larger application in a couple of weeks.", "About this application");
+        }
         #endregion
 
         #endregion
@@ -172,9 +211,32 @@ namespace TextEditor2021
             writer.Close();
         }
 
+        public void ConfirmClose()
+        {
+            var confirm = MessageBox.Show("There are unsaved changes. Do you want to save before you close this file?\n", "Confirming Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
+            if (confirm == DialogResult.Yes)
+            {
+                menuFileSave.PerformClick();
+                if (filePath != String.Empty)
+                {
+                    MessageBox.Show("File Saved. The file will now close.", "File Saved Sucessfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                isConfirmed = true;
+            }
+            else if (confirm == DialogResult.No)
+            {
+                isConfirmed = true;
+            }
+            else
+            {
+                isConfirmed = false;
+                MessageBox.Show("Operation Cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
 
         #endregion
 
+       
     }
 }
