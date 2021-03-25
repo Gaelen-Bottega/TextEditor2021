@@ -60,6 +60,7 @@ namespace TextEditor2021
             this.textBoxEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBoxEditor.Size = new System.Drawing.Size(800, 426);
             this.textBoxEditor.TabIndex = 0;
+            this.textBoxEditor.TextChanged += new System.EventHandler(this.TextModified);
             // 
             // menuStrip
             // 

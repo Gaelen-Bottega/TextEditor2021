@@ -1,4 +1,13 @@
-﻿using System;
+﻿// Project:     Text Editor 2021
+// Author:      Gaelen Rhoads and Kyle Chapman
+// Start Date:  March 25, 2021
+// Last Date:   March 25, 2021
+// Description:
+// This application showcases very basic file management practices. The user can create and edit, save, and close a file. They
+// can also copy, cut and paste text as they see fit. This application also has protection against users closing the file by accident by prompting them to save
+// when needed. The form title will show when a file has been changed and react accordingly to ensure the user does not lose work.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,8 +22,12 @@ namespace TextEditor2021
 {
     public partial class formTextEditor : Form
     {
+        // String to hold the file path of a file.
         string filePath = string.Empty;
+        // Boolean to confirm if a user wants to exit an unsaved file or not.
         bool isConfirmed = true;
+        // Boolean to represent changes to a file.
+        bool isUnchanged = true;
         
         public formTextEditor()
         {
@@ -23,22 +36,44 @@ namespace TextEditor2021
 
         #region "Event Handlers"
 
+        /// <summary>
+        /// This will fire whenever the text has been changed in the forms text box.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextModified(object sender, EventArgs e)
+        {
+            // Whenever text is changed, set isUnchanged to false
+            isUnchanged = false;
+            // Update the title to show the "*", meaning a user should save.
+            UpdateTitle();
+        }
+
         #region "File Menu"
 
         /// <summary>
-        /// Clears the textbox editor and opens a new file. Keeps the older file open too!
+        /// Clears the textbox editor and opens a new file.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void FileNew(object sender, EventArgs e)
         {
-            ConfirmClose();
-            if (isConfirmed == true)
+            // If the file is unchanged since last save, just open a new file without bothering the user!
+            if (isUnchanged == true)
             {
-                textBoxEditor.Clear();
-                filePath = String.Empty;
-                UpdateTitle();
+                // Function is at bottom of this file, to avoid repeat code.
+                NewFile();
             }
+            // If it has unsaved changes, ask the user if they would like to save.
+            else
+            {
+                ConfirmClose();
+                if (isConfirmed == true)
+                {
+                    NewFile();
+                }
+            }
+            
             
         }
 
@@ -49,27 +84,25 @@ namespace TextEditor2021
         /// <param name="e"></param>
         private void FileOpen(object sender, EventArgs e)
         {
-            ConfirmClose();
-            if (isConfirmed == true)
+            if (isUnchanged == true)
             {
-                OpenFileDialog openDialog = new OpenFileDialog();
-                openDialog.Filter = "All files (*.*)|*.*|Text files (*.txt)|*txt"; // Do we need this? 
-
-                if (openDialog.ShowDialog() == DialogResult.OK)
+                // Function is at bottom region, to avoid repeat code!
+                OpenFile();
+            }
+            else
+            {
+                ConfirmClose();
+                if (isConfirmed == true)
                 {
-                    FileStream openFile = new FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read);
-                    StreamReader reader = new StreamReader(openFile);
-
-                    textBoxEditor.Text = reader.ReadToEnd();
-
-                    reader.Close();
+                    OpenFile();
                 }
             }
+            
             
         }
 
         /// <summary>
-        /// Saves the file.
+        /// Saves the file. If a file path for the file already exists, that is. If no file path exists, the FileSaveAs event handler is called.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -85,6 +118,7 @@ namespace TextEditor2021
             {
                 // Then save it.
                 SaveTextFile(filePath);
+                isUnchanged = true;
             }
         }
 
@@ -104,23 +138,31 @@ namespace TextEditor2021
 
                 SaveTextFile(filePath);
 
+                isUnchanged = true;
+
                 UpdateTitle();
             }
         }
 
         /// <summary>
-        /// Closes the form.
+        /// Closes the form. 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void FileExit(object sender, EventArgs e)
         {
-            ConfirmClose();
-            if (isConfirmed == true)
+            if (isUnchanged == false)
+            {
+                ConfirmClose();
+                if (isConfirmed == true)
+                {
+                    Close();
+                }
+            }
+            else
             {
                 Close();
             }
-            
         }
         #endregion
 
@@ -147,9 +189,13 @@ namespace TextEditor2021
         /// <param name="e"></param>
         private void EditCut(object sender, EventArgs e)
         {
-            Clipboard.SetText(textBoxEditor.SelectedText);
+            if (textBoxEditor.SelectedText != String.Empty)
+            {
+                Clipboard.SetText(textBoxEditor.SelectedText);
 
-            textBoxEditor.SelectedText = "";
+                textBoxEditor.SelectedText = "";
+            }
+                
         }
 
         /// <summary>
@@ -167,7 +213,7 @@ namespace TextEditor2021
         #region "Help Menu"
 
         /// <summary>
-        /// 
+        /// Shows information about the application to the user. 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -186,6 +232,7 @@ namespace TextEditor2021
 
         /// <summary>
         /// Updates the title. If there is a file path present, (file has been saved) then it will show the file path of the file.
+        /// If the file has changes, the title will have an "*" to tell the user to save. It will disappear when they save.
         /// </summary>
         public void UpdateTitle()
         {
@@ -195,10 +242,15 @@ namespace TextEditor2021
             {
                 this.Text += " - " + filePath;
             }
+
+            if (!isUnchanged)
+            {
+                this.Text += "*";
+            }
         }
 
         /// <summary>
-        /// 
+        /// Saves a file to a path specified by the user.
         /// </summary>
         /// <param name="path"></param>
         public void SaveTextFile(string path)
@@ -211,6 +263,11 @@ namespace TextEditor2021
             writer.Close();
         }
 
+        /// <summary>
+        /// Confirms if the user wants to save before closing, or just close without saving. If they hit yes, the program will fire the save event handler. If
+        /// they hit no, it will just proceed with whatever action they wanted to do in the first place. If they hit cancel, it will abort the operation they 
+        /// were trying to do.
+        /// </summary>
         public void ConfirmClose()
         {
             var confirm = MessageBox.Show("There are unsaved changes. Do you want to save before you close this file?\n", "Confirming Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -235,8 +292,39 @@ namespace TextEditor2021
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Opens an existing file. This function was made to avoid repeat code.
+        /// </summary>
+        public void OpenFile()
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = "All files (*.*)|*.*|Text files (*.txt)|*txt"; 
 
-       
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                FileStream openFile = new FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read);
+                StreamReader reader = new StreamReader(openFile);
+
+                textBoxEditor.Text = reader.ReadToEnd();
+
+                reader.Close();
+                filePath = openDialog.FileName;
+                isUnchanged = true;
+                UpdateTitle();
+            }
+        }
+
+        /// <summary>
+        /// Opens a new file. This function was made to avoid repeat code. (Ironic how I repeated that comment though..)
+        /// </summary>
+        public void NewFile()
+        {
+            textBoxEditor.Clear();
+            filePath = String.Empty;
+            isUnchanged = true;
+            UpdateTitle();
+        }
+
+        #endregion
     }
 }
