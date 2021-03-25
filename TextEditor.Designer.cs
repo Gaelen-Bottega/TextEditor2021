@@ -53,6 +53,7 @@ namespace TextEditor2021
             // 
             // textBoxEditor
             // 
+            this.textBoxEditor.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxEditor.Location = new System.Drawing.Point(0, 24);
             this.textBoxEditor.Multiline = true;
